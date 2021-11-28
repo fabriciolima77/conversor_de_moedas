@@ -87,7 +87,7 @@ class _HomeState extends State<Home> {
     double btc = double.parse(text);
     dolarController.text = (btc * this.btc / dolar).toStringAsFixed(2);
     euroController.text = (btc * this.btc / euro).toStringAsFixed(2);
-    realController.text = (btc * this.btc / real).toStringAsFixed(2);
+    realController.text = (btc * this.btc).toStringAsFixed(2);
   }
 
 

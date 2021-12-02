@@ -6,24 +6,12 @@ import 'dart:async';
 import 'dart:convert';
 
 const request = "https://api.hgbrasil.com/finance?format=json-cors&key=a7a20019";
-//Requisição assincrona é uma requisição que você faz e não fica esperando
-//receber a hora que você recebe você executa a ação
+/*Requisição assincrona é uma requisição que você faz e não fica esperando
+receber a hora que você recebe você executa a ação*/
 void main() async{
 
   runApp(MaterialApp(
     home: Home(),
-    theme: ThemeData(
-      hintColor: Colors.amber,
-      primaryColor: Colors.white,
-      inputDecorationTheme: InputDecorationTheme(
-          enabledBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          focusedBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.amber)),
-          hintStyle: TextStyle(color: Colors.amber),
-      ),
-
-    ),
   ));
 }
 
@@ -106,71 +94,62 @@ class _HomeState extends State<Home> {
         child: Scaffold(
           backgroundColor: Colors.black,
           appBar: AppBar(
-            bottom: TabBar(
-              tabs: [
-                Tab(text: "Moedas",),
-                Tab(text: "Criptomoedas",)
-              ],
-            ),
-            title: Text("\$Conversor\$"),
+            title: Text("Conversor de Moedas"),
             backgroundColor: Colors.amber,
             centerTitle: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(32))
+            ),
           ),
           //FutureBuilder: Enquanto obtendo dados "Carregando dados"
           //Futuro = getData() futuro dos dados
-          body: TabBarView(
-            children: [
-              FutureBuilder<Map>(
-                  future: getData(),
-                  builder: (context, snapshot){
-                    switch(snapshot.connectionState) {
-                      case ConnectionState.none:
-                      case ConnectionState.waiting:
+          body: Center(
+            child: FutureBuilder<Map>(
+                future: getData(),
+                builder: (context, snapshot){
+                  switch(snapshot.connectionState) {
+                    case ConnectionState.none:
+                    case ConnectionState.waiting:
+                      return Center(
+                        child: Text("Carregando Dados...",
+                          style: TextStyle(color: Colors.amber, fontSize: 25.0,),
+                        ),
+                      );
+                    default:
+                      if(snapshot.hasError){
                         return Center(
-                          child: Text("Carregando Dados...",
+                          child: Text("Erro ao Carrear dados :(",
                             style: TextStyle(color: Colors.amber, fontSize: 25.0,),
                           ),
                         );
-                      default:
-                        if(snapshot.hasError){
-                          return Center(
-                            child: Text("Erro ao Carrear dados :(",
-                              style: TextStyle(color: Colors.amber, fontSize: 25.0,),
-                            ),
-                          );
-                        }else{
-                          dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
-                          euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
-                          btc = snapshot.data["results"]["currencies"]["BTC"]["buy"];
+                      }else{
+                        dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
+                        euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
+                        btc = snapshot.data["results"]["currencies"]["BTC"]["buy"];
 
-                          return SingleChildScrollView(
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Icon(Icons.monetization_on, size: 150.0,
-                                    color: Colors.amber),
-                                buildTextField("Reais", "R\$", realController, _realChanged),
-                                Divider(),
-                                buildTextField("Dolar", "\$", dolarController, _dolarChanged),
-                                Divider(),
-                                buildTextField("Euros", "€", euroController, _euroChanged),
-                                Divider(),
-                                buildTextField("Bitcoin", "₿", btcController, _btcChanged),
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: <Widget>[
+                              Icon(Icons.monetization_on, size: 150.0,
+                                  color: Colors.amber),
+                              buildTextField("Reais", "R\$", realController, _realChanged),
+                              Divider(),
+                              buildTextField("Dolar Estadunidense", " \$", dolarController, _dolarChanged),
+                              Divider(),
+                              buildTextField("Euros", " €", euroController, _euroChanged),
+                              Divider(),
+                              buildTextField("Bitcoin", " ₿", btcController, _btcChanged),
 
-                              ],
-                            ),
-                          );
-                        }
-                    }
-                  }),
-              Column(),
-            ],
-
-          ),
-
-          ),
-
+                            ],
+                          ),
+                        );
+                      }
+                  }
+                }),
+              ),
+            ),
         ),
       );
 
@@ -184,8 +163,11 @@ Widget buildTextField(
     decoration: InputDecoration(
       labelText: label,
       labelStyle: TextStyle(color: Colors.amber),
-      border: OutlineInputBorder(),
+      focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.amber)
+      ),
       prefixText: prefix,
+      prefixStyle: TextStyle(color: Colors.amber),
     ),
     style: TextStyle(
       color: Colors.amber, fontSize: 25.0,
